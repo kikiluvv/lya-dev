@@ -1,0 +1,25 @@
+collections:
+  - name: 'b&w'      
+    label: 'Images'          
+    folder: '/assets/gallery/bw/sheets'  
+    create: true           
+    slug: '{{slug}}'         
+    fields:                
+      - { label: 'URL', name: 'linkUrl', widget: 'string' } 
+      - { label: 'Image Path', name: 'imagePath', widget: 'string' } 
+  - name: 'color'      
+    label: 'Images'          
+    folder: '/assets/gallery/color/sheets'  
+    create: true           
+    slug: '{{slug}}'         
+    fields:                
+      - { label: 'URL', name: 'linkUrl', widget: 'string' } 
+      - { label: 'Image Path', name: 'imagePath', widget: 'string' } 
+  - name: 'events'      
+    label: 'Images'          
+    folder: '/assets/events'  
+    create: true           
+    slug: '{{slug}}'         
+    fields:                
+      - { label: 'URL', name: 'linkUrl', widget: 'string' } 
+      - { label: 'Image Path', name: 'imagePath', widget: 'string' } 
