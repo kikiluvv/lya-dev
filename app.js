@@ -6,6 +6,8 @@ const bodyParser = require('body-parser');
 require('dotenv').config();
 const app = express();
 const helmet = require('helmet');
+const bcrypt = require('bcrypt');
+
 
 
 app.set('view engine', 'ejs');
@@ -163,24 +165,40 @@ app.get('/logout', (req, res) => {
     res.redirect('/login');
 });
 
-// Use body-parser middleware for parsing URL-encoded form data
 app.post('/login', (req, res) => {
     const { username, password } = req.body;
-    if (
-        (username === process.env.USERNAME1 && password === process.env.PASSWORD1) ||
-        (username === process.env.USERNAME2 && password === process.env.PASSWORD2)
-    ) {
-        // Successful login
-        req.session.authenticated = true;
-        res.redirect('dashboard');
+    const storedUser = process.env.USERNAME; // Load the username from .env
+    const hashedPassword = process.env.HASHED_PASSWORD; // Load the hashed password from .env
+
+    // First, check if the submitted username matches the stored username
+    if (username === storedUser) {
+        // Use bcrypt to compare the inputted password with the hashed password
+        bcrypt.compare(password, hashedPassword, (err, result) => {
+            if (err) {
+                console.error(err);
+                // Handle the error
+                res.status(500).send('Internal Server Error');
+                return;
+            }
+
+            if (result) {
+                // Successful login
+                req.session.authenticated = true;
+                res.redirect('dashboard');
+            } else {
+                // Failed login
+                req.session.authenticated = false;
+                res.redirect('/login');
+            }
+        });
     } else {
-        // Failed login
-        console.log('pwned');
+        // Username doesn't match
         req.session.authenticated = false;
         res.redirect('/login');
     }
-
 });
+
+
 
 app.get('/dashboard', requireAuth, (req, res) => {
     res.render('dashboard');
