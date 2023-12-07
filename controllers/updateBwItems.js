@@ -20,7 +20,7 @@ function updateBwItems(newItem) {
         return;
       }
 
-      console.log('Items updated successfully.');
+      console.log('Items updated successfully: ', items);
     });
   });
 }

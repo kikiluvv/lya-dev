@@ -7,7 +7,7 @@ require('dotenv').config();
 const app = express();
 const helmet = require('helmet');
 const bcrypt = require('bcrypt');
-
+const { SitemapStream } = require('sitemap');
 
 
 app.set('view engine', 'ejs');
@@ -15,6 +15,42 @@ app.set('views', path.join(__dirname, 'views'));
 app.use('/public', express.static('public'));
 app.use('/data', express.static('data'));
 
+
+
+
+app.get('/sitemap.xml', function (req, res) {
+    try {
+        // Define our sitemap stream
+        const sitemapStream = new SitemapStream({ hostname: 'http://localhost:3000' });
+
+        // Set response content type to xml
+        res.header('Content-Type', 'application/xml');
+
+        // Pipe our sitemap stream to the response
+        sitemapStream.pipe(res);
+
+        // List of urls to add to the sitemap
+        const urls = [
+            { url: '/', changefreq: 'weekly', priority: 1.0 },
+            { url: '/color/', changefreq: 'weekly', priority: 0.9 },
+            { url: '/events/', changefreq: 'monthly', priority: 0.8 },
+            { url: '/shop/', changefreq: 'monthly', priority: 0.7 },
+            { url: '/contact/', changefreq: 'monthly', priority: 0.6 },
+            // Add more URLs here
+        ];
+
+        // Iterate over your URL list and write each one to the stream
+        urls.forEach(url => {
+            sitemapStream.write(url);
+        });
+
+        // End the stream
+        sitemapStream.end();
+    } catch (error) {
+        console.error(error);
+        res.status(500).end();
+    }
+});
 
 // Use Helmet middleware with CSP configuration
 app.use(
@@ -487,12 +523,18 @@ app.post('/dashboard/events/remove-item', requireAuth, (req, res) => {
 });
 
 app.get('/dashboard/shop', requireAuth, (req, res) => {
-   res.render('dashboardShop')
+    res.render('dashboardShop')
 });
 
 app.get('/dashboard/help', requireAuth, (req, res) => {
     res.render('dashboardHelp')
- });
+});
+
+
+app.get('/robots.txt', (req, res) => {
+    res.type('text/plain');
+    res.send("User-agent: *\nDisallow: /private/\nDisallow: /tmp/\nSitemap: http://localhost:3000/sitemap.xml");
+});
 
 
 app.listen(3000, () => {

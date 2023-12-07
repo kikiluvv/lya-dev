@@ -335,7 +335,7 @@ body {
     padding: 25px;
 }
 
-.hero-link-container {
+.hero-link-text {
     position: relative;
     display: flex;
     flex-direction: row;
@@ -363,6 +363,8 @@ body {
     text-align: center;
     position: relative;
     display: flex;
+    justify-content: center;
+    align-items: center;
     font-size: x-large;
     font-style: italic;
     margin-top: 2vh;
